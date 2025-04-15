@@ -4,6 +4,25 @@ var firstSelectedPiece = undefined;
 var secondSeletecPiece = undefined;
 let tempoInicio;
 let tempoFim;
+
+let intervaloTempo;
+
+// Inicia o cronômetro
+function iniciarCronometro() {
+    tempoInicio = Date.now();
+
+    intervaloTempo = setInterval(() => {
+        const agora = Date.now();
+        const tempoDecorrido = ((agora - tempoInicio) / 1000).toFixed(2);
+        document.getElementById("cronometro").textContent = tempoDecorrido;
+    }, 100); // atualiza a cada 0.1 segundo
+}
+
+// Para o cronômetro
+function pararCronometro() {
+    clearInterval(intervaloTempo);
+}
+
 // Create a puzzle with size 4 x 4
 window.onload = () => {
   for (r = 1; r <= 4; r++) {
@@ -20,7 +39,7 @@ window.onload = () => {
 };
 
 handleStartGame = async () => {
-  tempoInicio = Date.now();
+  iniciarCronometro(); // ⏱️ começa a contar
   document.querySelector('.overlay').style.display = 'none';
   document.querySelector('.overlay button').remove();
   document.querySelector('.container').classList.add('playing');
@@ -145,8 +164,11 @@ checkGameEnded = () => {
   ));
 
   if (gameEnded) {
+    
     const tempoFim = Date.now();
     const tempoDecorrido = ((tempoFim - tempoInicio) / 1000).toFixed(2); // em segundos
+    pararCronometro();
+    document.getElementById("cronometro").textContent = tempoDecorrido;
     document.querySelector('.container').classList.remove('playing');
     
     setTimeout(() => { 

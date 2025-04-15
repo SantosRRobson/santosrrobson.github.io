@@ -1,27 +1,31 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Jogo de Troca de Peças</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
     <div class="overlay">
-        <button type="button" onclick="handleStartGame()">JOGAR</button>
+      <button type="button" onclick="handleStartGame()">JOGAR</button>
     </div>
-    
+
     <div class="wrapper">
-        <div class="help">
-            <div class="preview"></div>
-            <span class="instructions">
-                <strong>COMO JOGAR</strong>
-                Selecione duas peças para que troquem de posição.
-            </span>
-        </div>
-        <div class="container"></div>
+      <div class="help">
+        <div class="preview"></div>
+        <span class="instructions">
+          <strong>COMO JOGAR</strong>
+          Selecione duas peças para que troquem de posição.
+        </span>
+        <span class="tempo">
+          <strong>Tempo</strong>
+          <span id="cronometro">00.00</span> segundos
+        </span>
+      </div>
+      <div class="container"></div>
     </div>
 
     <script src="main.js"></script>
-</body>
+  </body>
 </html>

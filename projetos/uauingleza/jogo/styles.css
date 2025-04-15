@@ -103,7 +103,7 @@ body {
   background: url('imagem.jpg') no-repeat center;
   background-size: contain;
   box-shadow: 10px 10px 10px 1px rgba(0, 0, 0, 0.5);
-  background-color: #F7F7F7;
+  background-color: #f7f7f7
 }
 
 .help .instructions {
@@ -129,6 +129,28 @@ body {
   left: 10px;
 }
 
+.help .tempo {
+  position: relative;
+  background: #FFF;
+  border-radius: 5px;
+  box-shadow: 10px 10px 10px 1px rgba(0, 0, 0, 0.5);
+  color: #4c4c4c;
+  font-size: 16px;
+  text-align: center;
+  padding: 30px 15px 15px;
+  margin-top: 50px;
+}
+
+.help .tempo strong {
+  position: absolute;
+  background: #44A744;
+  border-radius: 5px;
+  color: #fff;
+  text-transform: uppercase;
+  padding: 10px;
+  top: calc(0% - 21px);
+  left: 10px;
+}
 .container {
   width: 500px;
   height: 500px;
