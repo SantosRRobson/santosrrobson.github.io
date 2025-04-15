@@ -2,7 +2,8 @@ const pieces = [];
 
 var firstSelectedPiece = undefined;
 var secondSeletecPiece = undefined;
-
+let tempoInicio;
+let tempoFim;
 // Create a puzzle with size 4 x 4
 window.onload = () => {
   for (r = 1; r <= 4; r++) {
@@ -19,6 +20,7 @@ window.onload = () => {
 };
 
 handleStartGame = async () => {
+  tempoInicio = Date.now();
   document.querySelector('.overlay').style.display = 'none';
   document.querySelector('.overlay button').remove();
   document.querySelector('.container').classList.add('playing');
@@ -143,12 +145,17 @@ checkGameEnded = () => {
   ));
 
   if (gameEnded) {
+    const tempoFim = Date.now();
+    const tempoDecorrido = ((tempoFim - tempoInicio) / 1000).toFixed(2); // em segundos
     document.querySelector('.container').classList.remove('playing');
     
     setTimeout(() => { 
       const successMessage = document.createElement('h1');
       successMessage.classList.add('success-message');
-      successMessage.innerHTML = '<strong>Parabéns !</strong> Você conseguiu montar o quebra-cabeça !!!';
+      successMessage.innerHTML = `
+        <strong>Parabéns!</strong>  
+        Você conseguiu montar o quebra-cabeça em ${tempoDecorrido} segundos!
+      `;
 
       document.querySelector('.overlay').appendChild(successMessage);
       document.querySelector('.overlay').style.display = 'flex';
