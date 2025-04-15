@@ -103,6 +103,7 @@ body {
   background: url('imagem.jpg') no-repeat center;
   background-size: contain;
   box-shadow: 10px 10px 10px 1px rgba(0, 0, 0, 0.5);
+  background-color: #F7F7F7;
 }
 
 .help .instructions {
