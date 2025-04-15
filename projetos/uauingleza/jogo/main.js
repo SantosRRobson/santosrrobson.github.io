@@ -1,64 +1,157 @@
-const board = document.getElementById("board");
-const totalRows = 4;
-const totalCols = 4;
-let selected = [];
+const pieces = [];
 
-function createPieces() {
-  board.innerHTML = "";
+var firstSelectedPiece = undefined;
+var secondSeletecPiece = undefined;
 
-  let pieces = [];
+// Create a puzzle with size 4 x 4
+window.onload = () => {
+  for (r = 1; r <= 4; r++) {
+    for (c = 1; c <= 4; c++) {
+      const pieceElement = document.createElement('div');
+      pieceElement.setAttribute('id', `piece${r}-${c}`);
+      pieceElement.classList.add('piece');
+      pieceElement.setAttribute('style', `--r: ${r}; --c: ${c}`);
+      pieceElement.addEventListener('click', (e) => { makePlay(e) });
 
-  for (let r = 1; r <= totalRows; r++) {
-    for (let c = 1; c <= totalCols; c++) {
-      const piece = document.createElement("div");
-      piece.classList.add("piece");
-      piece.style.setProperty("--r", r);
-      piece.style.setProperty("--c", c);
-      piece.dataset.row = r;
-      piece.dataset.col = c;
-      pieces.push(piece);
+      document.querySelector('.container').appendChild(pieceElement);
     }
   }
+};
 
-  shuffleArray(pieces);
+handleStartGame = async () => {
+  document.querySelector('.overlay').style.display = 'none';
+  document.querySelector('.overlay button').remove();
+  document.querySelector('.container').classList.add('playing');
 
-  pieces.forEach(piece => {
-    board.appendChild(piece);
-    piece.addEventListener("click", () => handleSelect(piece));
+  setTimeout(async () => {
+    await fillPiecesList();
+    shufflePieces();
+  }, 500);
+}
+
+fillPiecesList = async () => {
+  document.querySelectorAll('.piece').forEach((e) => {
+    pieces.push({
+      id: e.id,
+      initial: { top: e.offsetTop, left: e.offsetLeft },
+      current: {}
+    });
   });
 }
 
-function handleSelect(piece) {
-  if (selected.length === 0) {
-    selected.push(piece);
-    piece.classList.add("selected");
-  } else if (selected.length === 1 && piece !== selected[0]) {
-    selected.push(piece);
-    swapPieces(selected[0], selected[1]);
-    selected.forEach(p => p.classList.remove("selected"));
-    selected = [];
+shufflePieces = () => {
+  pieces.forEach((piece) => {
+    let randomPosition;
+    let validPosition = false;
+
+    while(!validPosition) {
+      randomPosition = pieces[Math.floor(Math.random() * pieces.length)];
+
+      const usedPosition = pieces.some((p) => (
+        p.current.top === randomPosition.initial.top 
+          && p.current.left === randomPosition.initial.left
+      ));
+
+      validPosition = !usedPosition;
+    }
+
+    piece.current = {
+      top: randomPosition.initial.top,
+      left: randomPosition.initial.left,
+    }
+
+    document.querySelector(`#${piece.id}`).style.transform = `translate(
+      ${piece.current.left - piece.initial.left}px, 
+      ${piece.current.top - piece.initial.top}px
+    )`;
+  });
+}
+
+makePlay = (e) => {
+  e.target.classList.toggle('selected');
+
+  const { id, offsetTop, offsetLeft } = e.target;
+
+  if (!firstSelectedPiece) {
+    firstSelectedPiece = { id: id, top: offsetTop, left: offsetLeft };
+  } else if (!secondSeletecPiece) {
+    secondSeletecPiece = { id: id, top: offsetTop, left: offsetLeft };
+
+    const firstPiecePositions = getPiecePositions(firstSelectedPiece.id, firstSelectedPiece);
+    const secondPiecePositions = getPiecePositions(secondSeletecPiece.id, secondSeletecPiece);
+
+    movePieces(firstPiecePositions, secondPiecePositions);
+
+    updatePiecePositions(firstSelectedPiece.id, secondPiecePositions.current);
+    updatePiecePositions(secondSeletecPiece.id, firstPiecePositions.current);
+
+    firstSelectedPiece = undefined;
+    secondSeletecPiece = undefined;
+    
+    document.querySelectorAll('.selected').forEach((element) => {
+      element.classList.toggle('selected');
+    });
+
+    checkGameEnded();
   }
 }
 
-function swapPieces(p1, p2) {
-  const tempR = p1.style.getPropertyValue("--r");
-  const tempC = p1.style.getPropertyValue("--c");
+getPiecePositions = (id, defaultPositions) => {
+  const { top, left } = defaultPositions;
 
-  p1.style.setProperty("--r", p2.style.getPropertyValue("--r"));
-  p1.style.setProperty("--c", p2.style.getPropertyValue("--c"));
+  let piece = pieces.find((p) => p.id === id);
 
-  p2.style.setProperty("--r", tempR);
-  p2.style.setProperty("--c", tempC);
-}
+  if (!piece) {
+    piece = {
+      id: id,
+      initial: { top, left },
+      current: { top, left }
+    };
 
-function shuffleArray(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
+    pieces.push(piece);
   }
+
+  return Object.assign({}, piece);
 }
 
-function handleStartGame() {
-  document.querySelector(".overlay").style.display = "none";
-  createPieces();
+movePieces = (firstPiecePositions, secondPiecePositions) => {
+  const elementPiece1 = document.querySelector(`#${firstSelectedPiece.id}`);
+  const elementPiece2 = document.querySelector(`#${secondSeletecPiece.id}`);
+
+  elementPiece1.style.transform = `translate(
+    ${secondPiecePositions.current.left - firstPiecePositions.initial.left}px, 
+    ${secondPiecePositions.current.top - firstPiecePositions.initial.top}px
+  )`;
+
+  elementPiece2.style.transform = `translate(
+    ${firstPiecePositions.current.left - secondPiecePositions.initial.left}px, 
+    ${firstPiecePositions.current.top - secondPiecePositions.initial.top}px
+  )`;
 }
+
+updatePiecePositions = (id, newPositions) => {
+  const { top, left } = newPositions;
+
+  const index = pieces.findIndex((p) => p.id === id);
+
+  pieces[index].current = { top, left };
+}
+
+checkGameEnded = () => {
+  const gameEnded = pieces.every((piece) => (
+    piece.initial.top === piece.current.top && piece.initial.left === piece.current.left
+  ));
+
+  if (gameEnded) {
+    document.querySelector('.container').classList.remove('playing');
+    
+    setTimeout(() => { 
+      const successMessage = document.createElement('h1');
+      successMessage.classList.add('success-message');
+      successMessage.innerHTML = '<strong>Parabéns !</strong> Você conseguiu montar o quebra-cabeça !!!';
+
+      document.querySelector('.overlay').appendChild(successMessage);
+      document.querySelector('.overlay').style.display = 'flex';
+    }, 1000);
+  }
+} 

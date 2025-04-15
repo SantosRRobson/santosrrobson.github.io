@@ -2,7 +2,6 @@
   margin: 0;
   padding: 0;
   outline: 0;
-  box-sizing: border-box;
 }
 
 html, body {
@@ -15,7 +14,10 @@ body {
   align-items: center;
   justify-content: center;
   background: radial-gradient(#1BF8FF , #3A669D);
-  padding: 50px 0;
+  padding: 50px 0; 
+}
+
+body {
   font: 18px 'Roboto', sans-serif;
 }
 
@@ -49,6 +51,23 @@ body {
   background: #71CE70;
 }
 
+.overlay .success-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 35px;
+  text-shadow: 0 0 10px #000;
+  margin: 0;
+}
+
+.overlay .success-message strong {
+  color: #44A742;
+  font-size: 80px;
+  margin-bottom: 20px;
+}
+
 .wrapper {
   width: 90%;
   max-width: 1200px;
@@ -56,7 +75,6 @@ body {
   flex-direction: row;
   align-items: flex-start;
   justify-content: space-between;
-  flex-wrap: wrap;
 }
 
 @media screen and (max-width: 1090px) {
@@ -114,20 +132,26 @@ body {
   width: 500px;
   height: 500px;
   display: flex;
+  flex-direction: row;
   flex-wrap: wrap;
+  transform-style: preserve-3d;
   justify-content: space-between;
   transition: all 300ms;
 }
 
+.container.playing {
+  width: 600px;
+  height: 600px;
+}
+
 .container .piece {
+  position: relative;
   width: 125px;
   height: 125px;
-  background-image: url('imagem.jpg');
+  background: url('imagem.jpg') no-repeat;
   background-size: 500px 500px;
-  background-repeat: no-repeat;
-  background-position: 
-    calc(-125px * (var(--c) - 1))
-    calc(-125px * (var(--r) - 1));
+  background-position-x: calc(-125px * calc(var(--c) - 1));
+  background-position-y: calc(-125px * calc(var(--r) - 1));
   cursor: pointer;
   filter: drop-shadow(2px 2px 6px rgba(0, 0, 0, 0.5));
   transition: all 300ms;
@@ -135,4 +159,72 @@ body {
 
 .container .piece.selected {
   opacity: 0.5;
+}
+
+.container .piece::before {
+  position: absolute;
+  content: "";
+  width: 15px;
+  height: 100%;
+  background: #ffac90;
+  box-shadow: 5px 0px 10px 1px rgba(0, 0, 0, 0.5);
+  top: 8px;
+  right: -15px;
+  transform: skewY(45deg);
+}
+
+.container .piece::after {
+  position: absolute;
+  content: "";
+  width: 100%;
+  height: 15px;
+  background: #AD4A29;
+  box-shadow: 0px 5px 10px 1px rgba(0, 0, 0, 0.5);
+  bottom: -15px;
+  left: 8px;
+  transform: skewX(45deg);
+}
+@media screen and (max-width: 600px) {
+  .container,
+  .container.playing {
+    width: 90vw;
+    height: 90vw;
+  }
+
+  .container .piece {
+    width: 22vw;
+    height: 22vw;
+    background-size: 90vw 90vw;
+    background-position-x: calc(-22vw * (var(--c) - 1));
+    background-position-y: calc(-22vw * (var(--r) - 1));
+  }
+
+  .help {
+    width: 90%;
+  }
+
+  .help .preview {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 2;
+  }
+
+  .help .instructions {
+    font-size: 14px;
+    padding: 20px 10px 10px;
+  }
+
+  .overlay .success-message {
+    font-size: 22px;
+  }
+
+  .overlay .success-message strong {
+    font-size: 40px;
+  }
+
+  .overlay button {
+    min-width: 150px;
+    min-height: 40px;
+    font-size: 16px;
+  }
 }
